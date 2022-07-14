@@ -1,5 +1,5 @@
-drop table if exists article;
 drop table if exists article_comment;
+drop table if exists article;
 
 create table article
 (
