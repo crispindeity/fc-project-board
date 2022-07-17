@@ -1,5 +1,6 @@
 drop table if exists article_comment;
 drop table if exists article;
+drop table if exists user_account;
 
 create table article
 (
@@ -49,3 +50,25 @@ create index articleCommentCreatedAtIndex
 
 create index articleCommentContentIndex
     on article_comment (content);
+
+create table user_account
+(
+    id            bigint       not null auto_increment,
+    created_at    datetime(6)  not null,
+    created_by    varchar(100) not null,
+    modified_at   datetime(6)  not null,
+    modified_by   varchar(100) not null,
+    email         varchar(100),
+    memo          varchar(255),
+    nick_name     varchar(100),
+    user_id       varchar(50)  not null,
+    user_password varchar(255) not null,
+    primary key (id)
+);
+
+alter table user_account
+    add constraint userAccountUK unique (email);
+
+create index userAccountUserIdIndex on user_account (user_id);
+create index userAccountCreatedAtIndex on user_account (created_at);
+create index userAccountCreatedByIndex on user_account (created_by);

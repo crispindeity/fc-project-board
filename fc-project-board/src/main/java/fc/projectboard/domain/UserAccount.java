@@ -7,9 +7,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
+import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@ToString
+@Table(indexes = {
+        @Index(columnList = "userId"),
+        @Index(columnList = "email", unique = true),
+        @Index(columnList = "createdAt"),
+        @Index(columnList = "createdBy")
+})
 @Entity
 public class UserAccount extends AuditingFields{
 
