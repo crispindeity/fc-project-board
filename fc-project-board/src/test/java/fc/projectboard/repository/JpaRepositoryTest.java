@@ -13,6 +13,7 @@ import java.util.List;
 
 import fc.projectboard.config.JpaConfig;
 import fc.projectboard.domain.Article;
+import fc.projectboard.domain.UserAccount;
 
 @DisplayName("JPA 연결 테스트")
 @Import(JpaConfig.class)
@@ -21,11 +22,14 @@ class JpaRepositoryTest {
 
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final UserAccountRepository userAccountRepository;
 
     public JpaRepositoryTest(@Autowired ArticleRepository articleRepository,
-                             @Autowired ArticleCommentRepository articleCommentRepository) {
+                             @Autowired ArticleCommentRepository articleCommentRepository,
+                             @Autowired UserAccountRepository userAccountRepository) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @Test
@@ -47,9 +51,10 @@ class JpaRepositoryTest {
     void givenTestData_whenInserting_thenWorksFine() throws Exception {
         // Given
         long previousCount = articleRepository.count();
-
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("uno", "pw", null, null, null));
+        Article article = Article.of(userAccount, "new article", "new content", "#spring");
         // When
-        articleRepository.save((Article.of("new article", "new content", "#spring")));
+        articleRepository.save(article);
 
         // Then
         assertThat(articleRepository.count()).isEqualTo(previousCount + 1);
