@@ -16,7 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "content"),
         @Index(columnList = "createdAt"),
@@ -31,6 +31,9 @@ public class ArticleComment extends AuditingFields {
 
     @Setter
     @ManyToOne(optional = false)
+    private UserAccount userAccount;
+    @Setter
+    @ManyToOne(optional = false)
     private Article article;
     @Setter
     @Column(nullable = false, length = 500)
@@ -39,13 +42,14 @@ public class ArticleComment extends AuditingFields {
     protected ArticleComment() {
     }
 
-    private ArticleComment(Article article, String content) {
+    private ArticleComment(UserAccount userAccount, Article article, String content) {
+        this.userAccount = userAccount;
         this.article = article;
         this.content = content;
     }
 
-    public static ArticleComment of(Article article, String content) {
-        return new ArticleComment(article, content);
+    public static ArticleComment of(UserAccount userAccount, Article article, String content) {
+        return new ArticleComment(userAccount, article, content);
     }
 
     @Override
