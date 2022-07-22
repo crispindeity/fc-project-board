@@ -2,9 +2,7 @@ package fc.projectboard.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,13 +11,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-
-import java.time.LocalDateTime;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import fc.projectboard.domain.Article;
+import fc.projectboard.domain.UserAccount;
 import fc.projectboard.domain.type.SearchType;
 import fc.projectboard.dto.ArticleDto;
-import fc.projectboard.dto.ArticleUpdateDto;
+import fc.projectboard.dto.ArticleWithCommentsDto;
 import fc.projectboard.repository.ArticleRepository;
 
 @DisplayName("비즈니스 로직 - 게시글")
@@ -32,69 +31,100 @@ class ArticleServiceTest {
     @Mock
     private ArticleRepository articleRepository;
 
-    @DisplayName("게시글을 검색하면, 게시글 리스트를 반환한다.")
+    @DisplayName("검색어 없이 게시글을 검색하면, 게시글 페이지를 반환한다.")
     @Test
-    void givenSearchParameters_whenSearchingArticles_thenReturnArticleList() throws Exception {
+    void givenNoSearchParameters_whenSearchingArticles_thenReturnArticlePage() throws Exception {
         //given
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepository.findAll(pageable)).willReturn(Page.empty());
 
         //when
-        Page<ArticleDto> articles = sut.searchArticles(SearchType.TITLE, "search keyword");
+        Page<ArticleDto> articles = sut.searchArticles(null, null, pageable);
 
         //then
-        assertThat(articles).isNotNull();
+        assertThat(articles).isEmpty();
+        then(articleRepository).should().findAll(pageable);
     }
 
-    @DisplayName("게시글을 조회하면, 게시글을 반환한다.")
+    @DisplayName("검색어와 함께 게시글을 검색하면, 게시글 페이지를 반환한다.")
     @Test
-    void givenId_whenSearchingArticle_thenReturnArticle() throws Exception {
+    void givenSearchParameters_whenSearchingArticles_thenReturnArticlesPage() throws Exception {
         //given
+        SearchType searchType = SearchType.TITLE;
+        String searchKeyword = "title";
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepository.findByTitleContaining(searchKeyword, pageable)).willReturn(Page.empty());
 
         //when
-        ArticleDto articles = sut.searchArticles(1L);
+        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKeyword, pageable);
 
         //then
-        assertThat(articles).isNotNull();
+        assertThat(articles).isEmpty();
+        then(articleRepository).should().findByTitleContaining(searchKeyword, pageable);
     }
 
-    @DisplayName("게시글 정보를 입력하면, 게시글을 생성한다.")
+    @DisplayName("검색어 없이 게시글을 해시태그 검색하면, 빈 페이지를 반환한다.")
     @Test
-    void givenArticleInfo_whenSavingArticle_thenSavesArticle() throws Exception {
+    void givenNoSearchParameters_whenSearchingArticlesViaHashtag_thenReturnsEmptyPage() throws Exception {
         //given
-        ArticleDto dto = ArticleDto.of(LocalDateTime.now(), "geombong", "title", "content", "#hashtag");
-        given(articleRepository.save(any(Article.class))).willReturn(null);
+        Pageable pageable = Pageable.ofSize(20);
 
         //when
-        sut.saveArticle(dto);
+        Page<ArticleDto> articles = sut.searchArticlesViaHashtag(null, pageable);
 
         //then
-        then(articleRepository).should().save(any(Article.class));
+        assertThat(articles).isEqualTo(Page.empty(pageable));
+        then(articleRepository).shouldHaveNoInteractions();
     }
 
-    @DisplayName("게시글의 ID와 수정 정보를 입력하면, 게시글을 수정한다.")
+    @DisplayName("게시글을 해시태크 검색하면, 게시글 페이지를 반환한다.")
     @Test
-    void givenArticleIdAndModifiedInfo_whenUpdatingArticle_thenUpdatesArticle() throws Exception {
+    void givenHashtag_whenSearchingArticlesViaHashtag_thenReturnArticlesPage() throws Exception {
         //given
-        ArticleUpdateDto updateDto = ArticleUpdateDto.of("title", "content", "#hashtag");
-        given(articleRepository.save(any(Article.class))).willReturn(null);
+        String hashtag = "#java";
+        Pageable pageable = Pageable.ofSize(20);
+        given(articleRepository.findByHashtag(hashtag, pageable)).willReturn(Page.empty(pageable));
 
         //when
-        sut.updateArticle(1L, updateDto);
+        Page<ArticleDto> articles = sut.searchArticlesViaHashtag(hashtag, pageable);
 
         //then
-        then(articleRepository).should().save(any(Article.class));
+        assertThat(articles).isEqualTo(Page.empty(pageable));
+        then(articleRepository).should().findByHashtag(hashtag, pageable);
     }
 
-    @DisplayName("게시글의 ID를 입력하면, 게시글을 삭제한다.")
+    @DisplayName("게시글 ID로 조회하면, 댓글 달린 게시글을 반환한다.")
     @Test
-    void givenArticleId_whenDeletingArticle_thenDeletesArticle() throws Exception {
+    void givenArticleId_whenSearchingArticleWithComments_thenReturnsArticleWithComments() throws Exception {
         //given
-        ArticleUpdateDto updateDto = ArticleUpdateDto.of("title", "content", "#hashtag");
-        willDoNothing().given(articleRepository).delete(any(Article.class));
+        Long articleId = 1L;
+        Article article = createArticle();
 
         //when
-        sut.deleteArticle(1L, updateDto);
-
+        ArticleWithCommentsDto dto = sut.getArticleWithComments(articleId);
         //then
-        then(articleRepository).should().delete(any(Article.class));
+
+    }
+
+    private Article createArticle() {
+        Article article = Article.of(
+                createUserAccount(),
+                "title",
+                "content",
+                "#java"
+        );
+        ReflectionTestUtils.setField(article, "id", 1L);
+
+        return article;
+    }
+
+    private UserAccount createUserAccount() {
+        return UserAccount.of(
+                "geombong",
+                "pw",
+                "qwe123@123.com",
+                "geombong",
+                null
+        );
     }
 }

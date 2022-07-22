@@ -1,12 +1,14 @@
 package fc.projectboard.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fc.projectboard.domain.type.SearchType;
 import fc.projectboard.dto.ArticleDto;
 import fc.projectboard.dto.ArticleUpdateDto;
+import fc.projectboard.dto.ArticleWithCommentsDto;
 import fc.projectboard.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -18,12 +20,8 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
 
     @Transactional(readOnly = true)
-    public Page<ArticleDto> searchArticles(SearchType title, String search_keyword) {
+    public Page<ArticleDto> searchArticles(SearchType title, String search_keyword, Pageable pageable) {
         return Page.empty();
-    }
-
-    public ArticleDto searchArticles(long articleId) {
-        return null;
     }
 
     public void saveArticle(ArticleDto dto) {
@@ -33,5 +31,13 @@ public class ArticleService {
     }
 
     public void deleteArticle(long articleId, ArticleUpdateDto dto) {
+    }
+
+    public Page<ArticleDto> searchArticlesViaHashtag(String hashtage, Pageable pageable) {
+        return null;
+    }
+
+    public ArticleWithCommentsDto getArticleWithComments(Long articleId) {
+        return null;
     }
 }
