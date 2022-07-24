@@ -227,7 +227,7 @@ class ArticleServiceTest {
 
     @DisplayName("해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
     @Test
-    void given_when_then() throws Exception {
+    void givenNothing_whenCalling_thenReturnsHashtags() throws Exception {
         //given
         List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
         given(articleRepository.findAllDistinctHashtags()).willReturn(expectedHashtags);

@@ -39,5 +39,5 @@ public interface ArticleRepository extends
 
     void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
 
-    List<String> findAllDistinctHashtags();
+//    List<String> findAllDistinctHashtags();
 }
