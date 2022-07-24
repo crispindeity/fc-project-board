@@ -6,29 +6,57 @@ import lombok.Getter;
 
 @Getter
 public class ArticleDto {
-    private LocalDateTime createdAt;
-    private String createdBy;
+    private Long id;
+    private UserAccountDto userAccountDto;
     private String title;
     private String content;
     private String hashtag;
+    private LocalDateTime createdAt;
+    private String createdBy;
+    private LocalDateTime modifiedAt;
+    private String modifiedBy;
 
-    private ArticleDto(LocalDateTime createdAt,
-                       String createdBy,
-                       String title,
-                       String content,
-                       String hashtag) {
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
+
+    public ArticleDto(Long id,
+                      UserAccountDto userAccountDto,
+                      String title,
+                      String content,
+                      String hashtag,
+                      LocalDateTime createdAt,
+                      String createdBy,
+                      LocalDateTime modifiedAt,
+                      String modifiedBy) {
+        this.id = id;
+        this.userAccountDto = userAccountDto;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.modifiedAt = modifiedAt;
+        this.modifiedBy = modifiedBy;
     }
 
-    public static ArticleDto of(LocalDateTime createdAt,
-                                String createdBy,
+    public static ArticleDto of(UserAccountDto userAccountDto,
                                 String title,
                                 String content,
-                                String hashtag) {
-        return new ArticleDto(createdAt, createdBy, title, content, hashtag);
+                                String hashtag,
+                                LocalDateTime createdAt,
+                                String createdBy,
+                                LocalDateTime modifiedAt,
+                                String modifiedBy) {
+        return new ArticleDto(null, userAccountDto, title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
+    }
+
+    public static ArticleDto of(Long id,
+                                UserAccountDto userAccountDto,
+                                String title,
+                                String content,
+                                String hashtag,
+                                LocalDateTime createdAt,
+                                String createdBy,
+                                LocalDateTime modifiedAt,
+                                String modifiedBy) {
+        return new ArticleDto(id, userAccountDto, title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 }

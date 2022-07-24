@@ -5,9 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import fc.projectboard.domain.type.SearchType;
 import fc.projectboard.dto.ArticleDto;
-import fc.projectboard.dto.ArticleUpdateDto;
 import fc.projectboard.dto.ArticleWithCommentsDto;
 import fc.projectboard.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,10 @@ public class ArticleService {
     public void saveArticle(ArticleDto dto) {
     }
 
-    public void updateArticle(long articleId, ArticleUpdateDto dto) {
+    public void updateArticle(long articleId, ArticleDto dto) {
     }
 
-    public void deleteArticle(long articleId, ArticleUpdateDto dto) {
+    public void deleteArticle(long articleId, String dto) {
     }
 
     public Page<ArticleDto> searchArticlesViaHashtag(String hashtage, Pageable pageable) {
@@ -39,5 +40,17 @@ public class ArticleService {
 
     public ArticleWithCommentsDto getArticleWithComments(Long articleId) {
         return null;
+    }
+
+    public void getArticle(Long articleId) {
+
+    }
+
+    public long getArticleCount() {
+        return 0;
+    }
+
+    public List<String> getHashtags() {
+        return List.of();
     }
 }
