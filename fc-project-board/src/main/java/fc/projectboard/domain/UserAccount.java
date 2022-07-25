@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
@@ -31,10 +29,9 @@ public class UserAccount extends AuditingFields{
     @Setter
     @Column(nullable = false)
     private String userPassword;
-
     @Setter
     @Column(length = 100)
-    private String nickName;
+    private String nickname;
     @Setter
     @Column(length = 100)
     private String email;
@@ -44,16 +41,16 @@ public class UserAccount extends AuditingFields{
     protected UserAccount() {
     }
 
-    private UserAccount(String userId, String userPassword, String email, String nickName, String memo) {
+    private UserAccount(String userId, String userPassword, String email, String nickname, String memo) {
         this.userId = userId;
         this.userPassword = userPassword;
         this.email = email;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.memo = memo;
     }
 
-    public static UserAccount of(String userId, String userPassword, String email, String nickName, String memo) {
-        return new UserAccount(userId, userPassword, email, nickName, memo);
+    public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo) {
+        return new UserAccount(userId, userPassword, email, nickname, memo);
     }
 
     @Override
