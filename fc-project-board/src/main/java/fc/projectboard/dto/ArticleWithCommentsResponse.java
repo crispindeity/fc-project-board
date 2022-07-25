@@ -13,17 +13,17 @@ public class ArticleWithCommentsResponse {
     private String title;
     private String content;
     private String hashtag;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private String email;
     private String nickname;
     private Set<ArticleCommentResponse> articleCommentsResponse;
 
-    private ArticleWithCommentsResponse(Long id, String title, String content, String hashtag, LocalDateTime createAt, String email, String nickname, Set<ArticleCommentResponse> articleCommentsResponse) {
+    private ArticleWithCommentsResponse(Long id, String title, String content, String hashtag, LocalDateTime createdAt, String email, String nickname, Set<ArticleCommentResponse> articleCommentsResponse) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
-        this.createAt = createAt;
+        this.createdAt = createdAt;
         this.email = email;
         this.nickname = nickname;
         this.articleCommentsResponse = articleCommentsResponse;
