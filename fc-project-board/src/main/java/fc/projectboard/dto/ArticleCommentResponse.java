@@ -2,6 +2,9 @@ package fc.projectboard.dto;
 
 import java.time.LocalDateTime;
 
+import lombok.Getter;
+
+@Getter
 public class ArticleCommentResponse {
 
     private Long id;
