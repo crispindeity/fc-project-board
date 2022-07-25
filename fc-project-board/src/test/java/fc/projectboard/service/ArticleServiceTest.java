@@ -59,6 +59,25 @@ class ArticleServiceTest {
         then(articleRepository).should().findAll(pageable);
     }
 
+    @DisplayName("게시글을 조회하면, 게시글을 반환한다.")
+    @Test
+    void givenArticleId_whenSearchingArticle_thenReturnsArticle() throws Exception {
+        //given
+        Long articleId = 1L;
+        Article article = createArticle();
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
+
+        //when
+        ArticleWithCommentsDto dto = sut.getArticle(articleId);
+
+        //then
+        assertThat(dto)
+                .hasFieldOrPropertyWithValue("title", article.getTitle())
+                .hasFieldOrPropertyWithValue("content", article.getContent())
+                .hasFieldOrPropertyWithValue("hashtag", article.getHashtag());
+        then(articleRepository).should().findById(articleId);
+    }
+
     @DisplayName("검색어와 함께 게시글을 검색하면, 게시글 페이지를 반환한다.")
     @Test
     void givenSearchParameters_whenSearchingArticles_thenReturnArticlesPage() throws Exception {
@@ -149,14 +168,14 @@ class ArticleServiceTest {
     void givenArticleInfo_whenSavingArticle_thenSavesArticle() throws Exception {
         //given
         ArticleDto dto = createArticleDto();
-        given(userAccountRepository.getReferenceById(dto.getUserAccountDto().getUserId())).willReturn(createUserAccount());
+//        given(userAccountRepository.getReferenceById(dto.getUserAccountDto().getUserId())).willReturn(createUserAccount());
         given(articleRepository.save(any(Article.class))).willReturn(createArticle());
 
         //when
         sut.saveArticle(dto);
 
         //then
-        then(userAccountRepository).should().getReferenceById(dto.getUserAccountDto().getUserId());
+//        then(userAccountRepository).should().getReferenceById(dto.getUserAccountDto().getUserId());
         then(articleRepository).should().save(any(Article.class));
     }
 
@@ -167,7 +186,7 @@ class ArticleServiceTest {
         Article article = createArticle();
         ArticleDto dto = createArticleDto("새 타이틀", "새 내용", "#springboot");
         given(articleRepository.getReferenceById(dto.getId())).willReturn(article);
-        given(userAccountRepository.getReferenceById(dto.getUserAccountDto().getUserId())).willReturn(dto.getUserAccountDto().toEntity());
+//        given(userAccountRepository.getReferenceById(dto.getUserAccountDto().getUserId())).willReturn(dto.getUserAccountDto().toEntity());
 
         //when
         sut.updateArticle(dto.getId(), dto);
@@ -178,7 +197,7 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", dto.getContent())
                 .hasFieldOrPropertyWithValue("hashtag", dto.getHashtag());
         then(articleRepository).should().getReferenceById(dto.getId());
-        then(userAccountRepository).should().getReferenceById(dto.getUserAccountDto().getUserId());
+//        then(userAccountRepository).should().getReferenceById(dto.getUserAccountDto().getUserId());
     }
 
     @DisplayName("없는 게시글의 수정 정보를 입력하면, 경고 로그를 찍고 아무 것도 하지 않는다.")
@@ -225,20 +244,20 @@ class ArticleServiceTest {
         then(articleRepository).should().count();
     }
 
-    @DisplayName("해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
-    @Test
-    void givenNothing_whenCalling_thenReturnsHashtags() throws Exception {
-        //given
-        List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
-        given(articleRepository.findAllDistinctHashtags()).willReturn(expectedHashtags);
-
-        //when
-        List<String> actualHashtags = sut.getHashtags();
-
-        //then
-        assertThat(actualHashtags).isEqualTo(expectedHashtags);
-        then(articleRepository).should().findAllDistinctHashtags();
-    }
+//    @DisplayName("해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
+//    @Test
+//    void givenNothing_whenCalling_thenReturnsHashtags() throws Exception {
+//        //given
+//        List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
+//        given(articleRepository.findAllDistinctHashtags()).willReturn(expectedHashtags);
+//
+//        //when
+//        List<String> actualHashtags = sut.getHashtags();
+//
+//        //then
+//        assertThat(actualHashtags).isEqualTo(expectedHashtags);
+//        then(articleRepository).should().findAllDistinctHashtags();
+//    }
 
 
     private ArticleDto createArticleDto() {
