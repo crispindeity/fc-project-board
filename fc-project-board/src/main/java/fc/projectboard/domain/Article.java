@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -31,16 +32,12 @@ import lombok.ToString;
 @Entity
 public class Article extends AuditingFields {
 
-    @OrderBy("createdAt desc")
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Setter
     @ManyToOne(optional = false)
+    @JoinColumn(name = "userId")
     private UserAccount userAccount;
     @Setter
     @Column(nullable = false)
@@ -50,6 +47,10 @@ public class Article extends AuditingFields {
     private String content;
     @Setter
     private String hashtag;
+    @OrderBy("createdAt desc")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
     protected Article() {
     }
@@ -71,11 +72,11 @@ public class Article extends AuditingFields {
         if (o == null || getClass() != o.getClass()) return false;
         Article article = (Article) o;
         // 아직 영속화되지 않은 Article Entity 는 동등성 체크에서 모두 탈락한다.
-        return id != null && id.equals(article.id);
+        return userAccount != null && userAccount.equals(article.userAccount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(userAccount);
     }
 }
