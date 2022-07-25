@@ -22,6 +22,14 @@ public interface ArticleRepository extends
         QuerydslPredicateExecutor<Article>,
         QuerydslBinderCustomizer<QArticle> {
 
+    Page<Article> findByTitleContaining(String searchKeyword, Pageable pageable);
+    Page<Article> findByContentContaining(String content, Pageable pageable);
+    Page<Article> findByUserAccount_UserIdContaining(String userId, Pageable pageable);
+    Page<Article> findByUserAccount_NicknameContaining(String searchKeyword, Pageable pageable);
+    Page<Article> findByHashtag(String hashtag, Pageable pageable);
+
+    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
+
     @Override
     default void customize(QuerydslBindings bindings, QArticle root) {
         bindings.excludeUnlistedProperties(true);
@@ -32,12 +40,6 @@ public interface ArticleRepository extends
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);
     }
-
-    Page<Article> findByTitleContaining(String searchKeyword, Pageable pageable);
-
-    Page<Article> findByHashtag(String hashtag, Pageable pageable);
-
-    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
 
 //    List<String> findAllDistinctHashtags();
 }
