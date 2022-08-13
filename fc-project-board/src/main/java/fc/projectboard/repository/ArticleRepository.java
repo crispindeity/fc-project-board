@@ -11,8 +11,6 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import java.util.List;
-
 import fc.projectboard.domain.Article;
 import fc.projectboard.domain.QArticle;
 
@@ -23,9 +21,13 @@ public interface ArticleRepository extends
         QuerydslBinderCustomizer<QArticle> {
 
     Page<Article> findByTitleContaining(String searchKeyword, Pageable pageable);
+
     Page<Article> findByContentContaining(String content, Pageable pageable);
+
     Page<Article> findByUserAccount_UserIdContaining(String userId, Pageable pageable);
+
     Page<Article> findByUserAccount_NicknameContaining(String searchKeyword, Pageable pageable);
+
     Page<Article> findByHashtag(String hashtag, Pageable pageable);
 
     void deleteByIdAndUserAccount_UserId(Long articleId, String userId);

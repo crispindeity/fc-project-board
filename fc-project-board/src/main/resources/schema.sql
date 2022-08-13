@@ -41,13 +41,6 @@ create table article_comment
     primary key (id)
 );
 
-# ALTER TABLE article
-#     MODIFY COLUMN user_account_id int UNSIGNED;
-# ALTER TABLE user_account
-#     MODIFY COLUMN user_id int UNSIGNED;
-# ALTER TABLE article_comment
-#     MODIFY COLUMN user_account_id int UNSIGNED;
-
 create index userAccountUserIdIndex on user_account (user_id);
 create index userAccountCreatedAtIndex on user_account (created_at);
 create index userAccountCreatedByIndex on user_account (created_by);
@@ -60,7 +53,10 @@ create index articleCommentCreatedAtIndex on article_comment (created_at);
 create index articleCommentContentIndex on article_comment (content);
 
 alter table user_account
-    add constraint userAccountUK unique (email);
+    add constraint userAccountUKByEmail unique (email);
+
+alter table user_account
+    add constraint userAccountUKByUserId unique (user_id);
 
 alter table article
     add constraint articleUserAccountFK foreign key (user_id) references user_account (user_id);
