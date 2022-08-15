@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import fc.projectboard.config.SecurityConfig;
+import fc.projectboard.domain.type.SearchType;
 import fc.projectboard.dto.ArticleWithCommentsDto;
 import fc.projectboard.dto.UserAccountDto;
 import fc.projectboard.service.ArticleService;
@@ -69,9 +70,31 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
+    @DisplayName("[View][GET] 게시글 리스트 (게시판) 페이지 - 검색어와 함께 호출")
+    @Test
+    void givenSearchKeyword_whenSearchingArticlesView_thenReturnArticlesView() throws Exception {
+        //given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchValue), any(Pageable.class))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
+
+        //when & then
+        mvc.perform(get("/articles")
+                        .queryParam("searchType", searchType.name())
+                        .queryParam("searchValue", searchValue))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("searchTypes"));
+        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
     @DisplayName("[View][GET] 게시글 리스트 (게시판) 페이지 - 페이징, 정렬 기능")
     @Test
-    void givenPagingAndSortingParams_whenSearchingArticlePage_thenReturnsArticlePage() throws Exception {
+    void givenPagingAndSortingParams_whenSearchingArticleView_thenReturnsArticleView() throws Exception {
         //given
         String sortName = "title";
         String direction = "desc";
