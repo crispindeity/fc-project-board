@@ -11,7 +11,6 @@ import javax.persistence.EntityNotFoundException;
 
 import fc.projectboard.domain.Article;
 import fc.projectboard.domain.type.SearchType;
-import fc.projectboard.dto.ArticleCommentDto;
 import fc.projectboard.dto.ArticleDto;
 import fc.projectboard.dto.ArticleWithCommentsDto;
 import fc.projectboard.repository.ArticleRepository;
@@ -80,8 +79,13 @@ public class ArticleService {
         articleRepository.deleteById(articleId);
     }
 
-    public Page<ArticleDto> searchArticlesViaHashtag(String hashtage, Pageable pageable) {
-        return null;
+    public Page<ArticleDto> searchArticlesViaHashtag(String hashtag, Pageable pageable) {
+        if (hashtag == null || hashtag.isBlank()) {
+            return Page.empty(pageable);
+        }
+        return articleRepository
+                .findByHashtag(hashtag, pageable)
+                .map(ArticleDto::from);
     }
 
     public ArticleWithCommentsDto getArticleWithComments(Long articleId) {
@@ -93,6 +97,6 @@ public class ArticleService {
     }
 
     public List<String> getHashtags() {
-        return List.of();
+        return articleRepository.findAllDistinctHashTags();
     }
 }
