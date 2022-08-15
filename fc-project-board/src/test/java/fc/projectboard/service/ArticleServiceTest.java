@@ -175,6 +175,7 @@ class ArticleServiceTest {
         sut.saveArticle(dto);
 
         //then
+
 //        then(userAccountRepository).should().getReferenceById(dto.getUserAccountDto().getUserId());
         then(articleRepository).should().save(any(Article.class));
     }
@@ -229,7 +230,7 @@ class ArticleServiceTest {
         then(articleRepository).should().deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
-    @DisplayName("게시글 수를 조회하면, 게스길 수를 반환한다.")
+    @DisplayName("게시글 수를 조회하면, 게시글 수를 반환한다.")
     @Test
     void givenNothing_whenCountingArticles_thenReturnsArticleCount() throws Exception {
         //given
@@ -244,20 +245,34 @@ class ArticleServiceTest {
         then(articleRepository).should().count();
     }
 
-//    @DisplayName("해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
-//    @Test
-//    void givenNothing_whenCalling_thenReturnsHashtags() throws Exception {
-//        //given
-//        List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
-//        given(articleRepository.findAllDistinctHashtags()).willReturn(expectedHashtags);
-//
-//        //when
-//        List<String> actualHashtags = sut.getHashtags();
-//
-//        //then
-//        assertThat(actualHashtags).isEqualTo(expectedHashtags);
-//        then(articleRepository).should().findAllDistinctHashtags();
-//    }
+    @DisplayName("검색어 없이 게시글을 해시태그 검색하면, 빈 페이지를 반환한다.")
+    @Test
+    void givenNoSearchParameters_whenSearchingArticlesViaHashtag_thenReturnEmptyPage() throws Exception {
+        //given
+        Pageable pageable = Pageable.ofSize(20);
+
+        //when
+        Page<ArticleDto> articles = sut.searchArticlesViaHashtag(null, pageable);
+
+        //then
+        assertThat(articles).isEqualTo(Page.empty(pageable));
+        then(articleRepository).shouldHaveNoInteractions();
+    }
+
+    @DisplayName("해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
+    @Test
+    void givenNothing_whenCalling_thenReturnsHashtags() throws Exception {
+        //given
+        List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
+        given(articleRepository.findAllDistinctHashTags()).willReturn(expectedHashtags);
+
+        //when
+        List<String> actualHashtags = sut.getHashtags();
+
+        //then
+        assertThat(actualHashtags).isEqualTo(expectedHashtags);
+        then(articleRepository).should().findAllDistinctHashTags();
+    }
 
 
     private ArticleDto createArticleDto() {
