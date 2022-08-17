@@ -2,6 +2,7 @@ package fc.projectboard.dto;
 
 import java.time.LocalDateTime;
 
+import fc.projectboard.domain.Article;
 import fc.projectboard.domain.ArticleComment;
 import lombok.Getter;
 
@@ -27,6 +28,13 @@ public class ArticleCommentDto {
         this.modifiedBy = modifiedBy;
     }
 
+    public static ArticleCommentDto of(Long articleId,
+                                       UserAccountDto userAccountDto,
+                                       String content
+    ) {
+        return new ArticleCommentDto(null, articleId, userAccountDto, content, null, null, null, null);
+    }
+
     public static ArticleCommentDto of(Long id,
                                        Long articleId,
                                        UserAccountDto userAccountDto,
@@ -49,6 +57,14 @@ public class ArticleCommentDto {
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
                 entity.getModifiedBy()
+        );
+    }
+
+    public ArticleComment toEntity(Article entity) {
+        return ArticleComment.of(
+                userAccountDto.toEntity(),
+                entity,
+                content
         );
     }
 }

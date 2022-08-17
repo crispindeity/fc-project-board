@@ -1,6 +1,7 @@
 package fc.projectboard.dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import lombok.Getter;
 
@@ -39,5 +40,18 @@ public class ArticleResponse {
                 dto.getUserAccountDto().getEmail(),
                 nickname
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArticleResponse that = (ArticleResponse) o;
+        return title.equals(that.title) && content.equals(that.content) && hashtag.equals(that.hashtag) && email.equals(that.email) && nickname.equals(that.nickname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, content, hashtag, email, nickname);
     }
 }

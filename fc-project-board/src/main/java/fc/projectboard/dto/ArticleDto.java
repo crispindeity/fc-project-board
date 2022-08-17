@@ -1,6 +1,7 @@
 package fc.projectboard.dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import fc.projectboard.domain.Article;
 import fc.projectboard.domain.UserAccount;

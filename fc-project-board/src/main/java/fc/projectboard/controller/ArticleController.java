@@ -21,6 +21,7 @@ import fc.projectboard.dto.ArticleRequest;
 import fc.projectboard.dto.ArticleResponse;
 import fc.projectboard.dto.ArticleWithCommentsResponse;
 import fc.projectboard.dto.BoardPrincipal;
+import fc.projectboard.dto.UserAccountDto;
 import fc.projectboard.service.ArticleService;
 import fc.projectboard.service.PaginationService;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +54,16 @@ public class ArticleController {
     @GetMapping("/{articleId}")
     public String article(@PathVariable Long articleId, ModelMap map) {
         ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticleWithComments(articleId));
+
         map.addAttribute("article", article);
         map.addAttribute("articleComments", article.getArticleCommentsResponse());
+        map.addAttribute("totalCount", articleService.getArticleCount());
 
         return "articles/detail";
     }
 
     @GetMapping("/search-hashtag")
-    public String searchHashtag(
+    public String searchArticleHashtag(
             @RequestParam(required = false) String searchValue,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             ModelMap map
@@ -77,24 +80,25 @@ public class ArticleController {
         return "articles/search-hashtag";
     }
 
-    @GetMapping
+    @GetMapping("/form")
     public String articleForm(ModelMap map) {
         map.addAttribute("formStatus", FormStatus.CREATE);
 
         return "articles/form";
     }
 
-    @PostMapping("/form")
-    public String postNewArticle(
-            @AuthenticationPrincipal BoardPrincipal boardPrincipal,
-            ArticleRequest articleRequest
-    ) {
-        articleService.saveArticle(articleRequest.toDto(boardPrincipal.toDto()));
+    @PostMapping ("/form")
+    public String postNewArticle(ArticleRequest articleRequest) {
+        // TODO: 인증 정보를 넣어줘야 한다.
+        articleService.saveArticle(articleRequest.toDto(UserAccountDto.of(
+                "uno", "asdf1234", "uno@mail.com", "Uno", "memo"
+        )));
+
         return "redirect:/articles";
     }
 
     @GetMapping("/{articleId}/form")
-    public String updateArticleFrom(@PathVariable Long articleId, ModelMap map) {
+    public String updateArticleForm(@PathVariable Long articleId, ModelMap map) {
         ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId));
 
         map.addAttribute("article", article);
@@ -103,24 +107,22 @@ public class ArticleController {
         return "articles/form";
     }
 
-    @PostMapping("/{articleId}/form")
-    public String updateArticle(
-            @PathVariable Long articleId,
-            @AuthenticationPrincipal BoardPrincipal boardPrincipal,
-            ArticleRequest articleRequest
-    ) {
-        articleService.updateArticle(articleId, articleRequest.toDto(boardPrincipal.toDto()));
+    @PostMapping ("/{articleId}/form")
+    public String updateArticle(@PathVariable Long articleId, ArticleRequest articleRequest) {
+        // TODO: 인증 정보를 넣어줘야 한다.
+        articleService.updateArticle(articleId, articleRequest.toDto(UserAccountDto.of(
+                "uno", "asdf1234", "uno@mail.com", "Uno", "memo"
+        )));
 
         return "redirect:/articles/" + articleId;
     }
 
-    @PostMapping("/{articleId}/delete")
-    public String deleteArticle(
-            @PathVariable Long articleId,
-            @AuthenticationPrincipal BoardPrincipal boardPrincipal
-    ) {
-        articleService.deleteArticle(articleId, boardPrincipal.getUsername());
+    @PostMapping ("/{articleId}/delete")
+    public String deleteArticle(@PathVariable Long articleId) {
+        // TODO: 인증 정보를 넣어줘야 한다.
+        articleService.deleteArticle(articleId);
 
         return "redirect:/articles";
     }
+
 }
