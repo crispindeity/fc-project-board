@@ -3,6 +3,7 @@ package fc.projectboard.dto;
 import java.time.LocalDateTime;
 
 import fc.projectboard.domain.Article;
+import fc.projectboard.domain.UserAccount;
 import lombok.Getter;
 
 @Getter
@@ -41,12 +42,8 @@ public class ArticleDto {
     public static ArticleDto of(UserAccountDto userAccountDto,
                                 String title,
                                 String content,
-                                String hashtag,
-                                LocalDateTime createdAt,
-                                String createdBy,
-                                LocalDateTime modifiedAt,
-                                String modifiedBy) {
-        return new ArticleDto(null, userAccountDto, title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
+                                String hashtag) {
+        return new ArticleDto(null, userAccountDto, title, content, hashtag, null, null, null, null);
     }
 
     public static ArticleDto of(Long id,
@@ -75,7 +72,7 @@ public class ArticleDto {
         );
     }
 
-    public Article toEntity() {
-        return Article.of(userAccountDto.toEntity(), title, content, hashtag);
+    public Article toEntity(UserAccount userAccount) {
+        return Article.of(userAccount, title, content, hashtag);
     }
 }

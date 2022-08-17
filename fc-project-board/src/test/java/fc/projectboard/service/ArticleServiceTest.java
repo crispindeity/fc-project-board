@@ -25,7 +25,7 @@ import javax.persistence.EntityNotFoundException;
 
 import fc.projectboard.domain.Article;
 import fc.projectboard.domain.UserAccount;
-import fc.projectboard.domain.type.SearchType;
+import fc.projectboard.domain.constant.SearchType;
 import fc.projectboard.dto.ArticleDto;
 import fc.projectboard.dto.ArticleWithCommentsDto;
 import fc.projectboard.dto.UserAccountDto;
@@ -68,7 +68,7 @@ class ArticleServiceTest {
         given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
 
         //when
-        ArticleWithCommentsDto dto = sut.getArticle(articleId);
+        ArticleWithCommentsDto dto = sut.getArticleWithComments(articleId);
 
         //then
         assertThat(dto)
@@ -153,7 +153,7 @@ class ArticleServiceTest {
 
         //when
         Throwable t = catchThrowable(() -> {
-            sut.getArticle(articleId);
+            sut.getArticleWithComments(articleId);
         });
 
         //then
