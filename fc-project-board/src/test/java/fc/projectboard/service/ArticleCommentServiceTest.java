@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,10 +31,15 @@ import fc.projectboard.repository.UserAccountRepository;
 @ExtendWith(MockitoExtension.class)
 class ArticleCommentServiceTest {
 
-    @InjectMocks private ArticleCommentService sut;
+    @InjectMocks
+    private ArticleCommentService sut;
 
-    @Mock private ArticleRepository articleRepository;
-    @Mock private ArticleCommentRepository articleCommentRepository;
+    @Mock
+    private ArticleRepository articleRepository;
+    @Mock
+    private ArticleCommentRepository articleCommentRepository;
+    @Mock
+    private UserAccountRepository userAccountRepository;
 
     @DisplayName("게시글 ID로 조회하면, 해당하는 댓글 리스트를 반환한다.")
     @Test
@@ -61,6 +65,7 @@ class ArticleCommentServiceTest {
         // Given
         ArticleCommentDto dto = createArticleCommentDto("댓글");
         given(articleRepository.getReferenceById(dto.getArticleId())).willReturn(createArticle());
+        given(userAccountRepository.getReferenceById(dto.getUserAccountDto().getUserId())).willReturn(createUserAccount());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
 
         // When
@@ -68,6 +73,7 @@ class ArticleCommentServiceTest {
 
         // Then
         then(articleRepository).should().getReferenceById(dto.getArticleId());
+        then(userAccountRepository).should().getReferenceById(dto.getUserAccountDto().getUserId());
         then(articleCommentRepository).should().save(any(ArticleComment.class));
     }
 
@@ -83,6 +89,7 @@ class ArticleCommentServiceTest {
 
         // Then
         then(articleRepository).should().getReferenceById(dto.getArticleId());
+        then(userAccountRepository).shouldHaveNoInteractions();
         then(articleCommentRepository).shouldHaveNoInteractions();
     }
 

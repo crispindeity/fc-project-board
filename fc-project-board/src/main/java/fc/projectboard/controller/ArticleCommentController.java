@@ -19,7 +19,7 @@ public class ArticleCommentController {
 
     @PostMapping("/new")
     public String postNewArticleComment(ArticleCommentRequest articleCommentRequest) {
-        articleCommentService.saveArticleComment(articleCommentRequest.toDto(UserAccountDto.of("geombong", "pw", "123@123.com", null, null)));
+        articleCommentService.saveArticleComment(articleCommentRequest.toDto(UserAccountDto.of("uno", "pw", "123@123.com", null, null)));
         return "redirect:/articles/" + articleCommentRequest.getArticleId();
     }
 
