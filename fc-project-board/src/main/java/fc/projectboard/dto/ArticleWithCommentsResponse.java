@@ -16,9 +16,10 @@ public class ArticleWithCommentsResponse {
     private LocalDateTime createdAt;
     private String email;
     private String nickname;
+    private String userId;
     private Set<ArticleCommentResponse> articleCommentsResponse;
 
-    private ArticleWithCommentsResponse(Long id, String title, String content, String hashtag, LocalDateTime createdAt, String email, String nickname, Set<ArticleCommentResponse> articleCommentsResponse) {
+    private ArticleWithCommentsResponse(Long id, String title, String content, String hashtag, LocalDateTime createdAt, String email, String nickname, String userId, Set<ArticleCommentResponse> articleCommentsResponse) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -26,6 +27,7 @@ public class ArticleWithCommentsResponse {
         this.createdAt = createdAt;
         this.email = email;
         this.nickname = nickname;
+        this.userId = userId;
         this.articleCommentsResponse = articleCommentsResponse;
     }
 
@@ -43,6 +45,7 @@ public class ArticleWithCommentsResponse {
                 dto.getCreatedAt(),
                 dto.getUserAccount().getEmail(),
                 nickname,
+                dto.getUserAccount().getUserId(),
                 dto.getArticleCommentDtos().stream()
                         .map(ArticleCommentResponse::from)
                         .collect(Collectors.toCollection(LinkedHashSet::new))

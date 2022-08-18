@@ -14,7 +14,7 @@ public class ArticleCommentResponse {
     private String nickname;
     private String userId;
 
-    private ArticleCommentResponse(Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId) {
+    ArticleCommentResponse(Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;
