@@ -7,16 +7,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
+import java.util.Optional;
 
-import fc.projectboard.config.JpaConfig;
 import fc.projectboard.domain.Article;
 import fc.projectboard.domain.UserAccount;
 
 @DisplayName("JPA 연결 테스트")
-@Import(JpaConfig.class)
+@Import(JpaRepositoryTest.TestJapConfig.class)
 @DataJpaTest
 class JpaRepositoryTest {
 
@@ -95,5 +99,15 @@ class JpaRepositoryTest {
                     .as("게시클이 삭제되면 연관되어 있는 댓글도 함께 삭제 되어야 한다.")
                     .isEqualTo(previousArticleCommentCount - deletedCommentsSize);
         });
+    }
+
+    @EnableJpaAuditing
+    @TestConfiguration
+    public static class TestJapConfig {
+
+        @Bean
+        public AuditorAware<String> auditorAware() {
+            return () -> Optional.of("uno");
+        }
     }
 }
