@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import fc.projectboard.domain.Article;
 import fc.projectboard.domain.ArticleComment;
+import fc.projectboard.domain.UserAccount;
 import lombok.Getter;
 
 @Getter
@@ -60,10 +61,10 @@ public class ArticleCommentDto {
         );
     }
 
-    public ArticleComment toEntity(Article entity) {
+    public ArticleComment toEntity(Article article, UserAccount userAccount) {
         return ArticleComment.of(
-                userAccountDto.toEntity(),
-                entity,
+                userAccount,
+                article,
                 content
         );
     }
