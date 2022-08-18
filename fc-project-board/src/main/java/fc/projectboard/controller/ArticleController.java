@@ -20,8 +20,7 @@ import fc.projectboard.domain.constant.SearchType;
 import fc.projectboard.dto.ArticleRequest;
 import fc.projectboard.dto.ArticleResponse;
 import fc.projectboard.dto.ArticleWithCommentsResponse;
-import fc.projectboard.dto.BoardPrincipal;
-import fc.projectboard.dto.UserAccountDto;
+import fc.projectboard.dto.security.BoardPrincipal;
 import fc.projectboard.service.ArticleService;
 import fc.projectboard.service.PaginationService;
 import lombok.RequiredArgsConstructor;
@@ -87,12 +86,12 @@ public class ArticleController {
         return "articles/form";
     }
 
-    @PostMapping ("/form")
-    public String postNewArticle(ArticleRequest articleRequest) {
-        // TODO: 인증 정보를 넣어줘야 한다.
-        articleService.saveArticle(articleRequest.toDto(UserAccountDto.of(
-                "uno", "asdf1234", "uno@mail.com", "Uno", "memo"
-        )));
+    @PostMapping("/form")
+    public String postNewArticle(
+            ArticleRequest articleRequest,
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal
+    ) {
+        articleService.saveArticle(articleRequest.toDto(boardPrincipal.toDto()));
 
         return "redirect:/articles";
     }
@@ -107,20 +106,34 @@ public class ArticleController {
         return "articles/form";
     }
 
-    @PostMapping ("/{articleId}/form")
-    public String updateArticle(@PathVariable Long articleId, ArticleRequest articleRequest) {
-        // TODO: 인증 정보를 넣어줘야 한다.
-        articleService.updateArticle(articleId, articleRequest.toDto(UserAccountDto.of(
-                "uno", "asdf1234", "uno@mail.com", "Uno", "memo"
-        )));
+    @PostMapping("/{articleId}/form")
+    public String updateArticle(
+            @PathVariable Long articleId,
+            ArticleRequest articleRequest,
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal
+    ) {
+        articleService.updateArticle(articleId, articleRequest.toDto(boardPrincipal.toDto()));
 
         return "redirect:/articles/" + articleId;
     }
 
-    @PostMapping ("/{articleId}/delete")
-    public String deleteArticle(@PathVariable Long articleId) {
+    @PostMapping("/{articleId}/delete")
+    public String deleteArticle(
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal
+    ) {
+        /*
+        * 예전에 Security 에서 유저 정보를 가져올때 사용하던 방식
+        * 지금은 어노테이션으로 간편하게 가져올 수 있다. 단, 형식에 맞는 BoardPrincipal 을 구현 해놔야 가능하다.
+        Optional<String> username = Optional.ofNullable(SecurityContextHolder.getContext())
+                .map(SecurityContext::getAuthentication)
+                .filter(Authentication::isAuthenticated)
+                .map(BoardPrincipal.class::cast)
+                .map(BoardPrincipal::getUsername);
+        */
+
         // TODO: 인증 정보를 넣어줘야 한다.
-        articleService.deleteArticle(articleId);
+        articleService.deleteArticle(articleId, boardPrincipal.getUsername());
 
         return "redirect:/articles";
     }
